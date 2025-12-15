@@ -1,0 +1,49 @@
+
+public class Objeto {
+
+
+    private final TipoA atributoA;
+    private final TipoB atributoB;
+    private final TipoC atributoC;
+
+
+    private Objeto(TipoA atributoA, TipoB atributoB, TipoC atributoC) {
+        this.atributoA = atributoA;
+        this.atributoB = atributoB;
+        this.atributoC = atributoC;
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+
+    public static class Builder {
+
+        private TipoA atributoA;
+        private TipoB atributoB;
+        private TipoC atributoC;
+
+       
+        public Builder atributoA(TipoA valor) {
+            this.atributoA = valor;
+            return this;
+        }
+
+        public Builder atributoB(TipoB valor) {
+            this.atributoB = valor;
+            return this;
+        }
+
+   
+        public Builder atributoC(TipoC valor) {
+            this.atributoC = valor;
+            return this;
+        }
+
+  
+        public Objeto build() {
+            return new Objeto(atributoA, atributoB, atributoC);
+        }
+    }
+}

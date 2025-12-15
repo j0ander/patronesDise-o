@@ -1,0 +1,56 @@
+GRADLE: implementation("com.zaxxer:HikariCP:7.0.2")
+
+package
+
+public class ConexionDb{
+	private static final String URL = "jdbc:sqlite:libros.db";
+	private static final HikariDataSource ds;
+
+	static{
+		HikariConfig config = new HikariConfig();
+		config.setJdbcUrl(URL);
+		config.setConnectionTimeout(1000);
+		ds = new HikariDataSource(config);
+	}
+	private ConexionDb(){}
+	public static Connection getConnection(){
+		try{
+			return ds.getConnection();
+		} catch(Exception ex){
+			throw new RuntimeException(ex);
+		}
+	}
+}
+
+
+// MAIN REPOSITORY CRUD CREAR UNA INTERFAZ
+
+public interface IObjetoRepository{
+	void insertar (Libro libro);
+	Libro buscarPorId(int id);
+	List<Libro> listar();
+	void actualizar(Libro libro);
+	void eliminar(int id);
+}
+
+public class ObjetoRepositoryBASEDATOS implements IObjetoRepository{
+	
+	public void insertar(Libro libro){
+		String sql = "INSERT INTO libros(id, titulo, isbn, idAutor) VALUES(?,?,?,?)";
+		try(Connection conn = ConexionDb.getConnection();
+			PreparedStatement stmt = conn.prepareStatement(sql)){
+		
+			stmt.setInt(1, libro.id());
+			stmt.setString(2, libro.titulo());
+			stmt.setString(3, libro.isbn());
+			stmt.setString(4, libro.idAutor());
+
+			stmt.executeUpdate();
+		} catch(Exception e){
+			throw new RuntimeException(e);
+		}
+	}
+		
+}
+
+

@@ -1,0 +1,59 @@
+GRADLE: implementation("com.google.guava:guava:33.3.1-jre")
+
+public class FactoryImpl implements IFactory{
+	private final Map<String, Class<?>> components = new HashMap<>();
+	
+	public void init(String pkgName){
+		try{
+			ClassLoader classLoader = FactoryImpl.class.getClassLoader();
+			ClassPath classPath = ClassPath.from(classLoader);
+			
+			var classes = classPath.getTopLevelClassesRecursive(pkgName); 
+			
+			for(var info : classes){
+				Class<?> clazz = info.load();
+
+				ClaseAnotacion anotacion = clazz.getAnnotation(ClaseAnotacion.class);
+				if(comp != null){
+					components.put(anotacion.name(), clazz);
+					}
+				}
+			System.out.println("Componentes registrados " + components.keySet());
+		
+		}catch(Exception e){
+			throw new RuntimeException("Error al inicializar Factory", e);
+		}
+	}
+
+	public <T> T createFactory(String name, Object... args){
+		Class<?> clazz = components.get(name);
+		
+		if(Clazz == null){
+			throw new Runtime Exception("Componente no encontrado: " + name);
+		}
+
+		try{
+			for(var constructor: Clazz.getConstructors()){
+				if(constructor.getParameterCount() == args.length){
+					return (T) constructor.newInstance(args);
+				}
+			}
+			throw new RuntimeException("No existe constructor compatible para: " + name);
+		}catch(Exception e){
+			throw new RuntimeException("Error creando componente " + name, e);
+			}
+	}
+
+
+}
+
+//USO EN EL MAIN
+
+	public class Main{
+		public static void main(String[] args){
+			FactoryImpl factory = new FactoryImpl();
+			factory.init("nombreDelPaquete");
+
+			Objeto obj = factory.createFactory("nombreDeLaAnotacionEnLaClase", Parametros);
+		}
+	}
